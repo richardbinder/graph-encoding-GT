@@ -1,3 +1,8 @@
 # CUSTOM
 .vscode/
 .DS_store
+.idea
+wandb
+datasets
+results
+*.ckpt

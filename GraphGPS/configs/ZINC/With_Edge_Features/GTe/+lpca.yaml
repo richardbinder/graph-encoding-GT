@@ -18,7 +18,7 @@ dataset:
   node_encoder_bn: False
   edge_encoder: False
 ctenc_LPCAEnc:
-  dim_ct: 16
+  dim_ct: 24
   gamma: 0.0
 train:
   mode: custom

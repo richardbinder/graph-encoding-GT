@@ -10,10 +10,10 @@ Our repository combines the repositories from:
 ## Python Virtual Enviroment Setup
 
 ```bash
-conda create --name HomEnv python=3.12.3
+# conda create --name HomEnv python=3.12.3
 conda activate HomEnv
 
-pip install torch==2.2.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html
+pip install torch==2.3.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html
 pip install torch_geometric==2.5.3
 
 pip install ogb easydict pyyaml neptune wandb yacs

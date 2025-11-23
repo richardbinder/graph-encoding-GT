@@ -36,6 +36,9 @@ gt:
   layer_norm: False
   batch_norm: True
   residual: True
+  post_norm: False
+  norm_layers: False
+  extra_norm: False
 gnn:
   head: san_graph
   layers_pre_mp: 0 #not usd when set to 0

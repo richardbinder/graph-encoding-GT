@@ -23,4 +23,4 @@ if [[ $# -eq 3 ]]; then
     dataset_dim="ctenc_LPCAEnc.dim_ct $3"
 fi
 
-python main.py --cfg $cfg_file --repeat 1 seed $seed out_dir ${out_dir} name_tag none.enc.og ${dataset_dim} wandb.use False
+python main.py --cfg $cfg_file --repeat 1 seed $seed out_dir $out_dir name_tag none.enc.og $dataset_dim wandb.use False
