@@ -15,12 +15,11 @@ conda activate HomEnv
 
 pip install torch==2.3.0+cu118 -f https://download.pytorch.org/whl/torch_stable.html
 pip install torch_geometric==2.5.3
+pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-2.3.0+cu118.html
 
 pip install ogb easydict pyyaml neptune wandb yacs
 
 pip install opt_einsum
-
-pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-2.2.1+cu118.html
 
 pip install tensorboardX
 pip install performer-pytorch
