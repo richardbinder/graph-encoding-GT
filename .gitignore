@@ -6,3 +6,5 @@ wandb
 datasets
 results
 *.ckpt
+*.npz
+*.json
