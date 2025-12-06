@@ -14,7 +14,7 @@ if [[ ! -f "$cfg_file" ]]; then
     exit
 fi
 
-enc_file="encodings/$enc/lpca.npz"
+enc_file="encodings/$enc"
 if [[ ! -f "$enc_file" ]]; then
     echo "ERROR: Encoding does not exist: $enc_file"
     exit
