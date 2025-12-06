@@ -27,7 +27,7 @@ if [[ $# -eq 3 ]]; then
     dataset_dim="posenc_LPCAEnc.dim_pe $enc_dim"
 fi
 
-vocab_dim=64
+vocab_dim=48
 embed_dim=$((vocab_dim+enc_dim))
 
 conda run -n HomEnv --live-stream python main.py --cfg $cfg_file --repeat 1 seed $seed out_dir $out_dir name_tag none.enc.og $dataset_dim gt.dim_hidden $embed_dim gnn.dim_inner $embed_dim wandb.use True
