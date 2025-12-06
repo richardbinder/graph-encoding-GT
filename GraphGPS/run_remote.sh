@@ -5,7 +5,7 @@ enc=$2
 seed=$3
 enc_dim=$4
 
-export ZINC_LPCA_DATA_DIR="encodings/$enc"
+export LPCA_DATA_DIR="encodings/$enc"
 
 
 cfg_file=$config

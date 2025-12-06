@@ -359,7 +359,7 @@ def preformat_GNNBenchmarkDataset(dataset_dir, name): #FLAGother
             for split in ['train', 'val', 'test']]
         )
         pre_transform_in_memory(dataset, T.Compose(tf_list))
-        dataset = get_data.add_lpca(os.environ["CIFAR_LPCA_DATA_DIR"], dataset=dataset)
+        dataset = get_data.add_lpca(os.environ["LPCA_DATA_DIR"], dataset=dataset)
     return dataset
 
 
@@ -629,7 +629,7 @@ def preformat_Peptides(dataset_dir, name): #FLAGpep
     )
 
     if hom_type != None and hom_type == "LPCA":
-        dataset = get_data.add_lpca(os.environ["Peptides_LPCA_DATA_DIR"], dataset=dataset)
+        dataset = get_data.add_lpca(os.environ["LPCA_DATA_DIR"], dataset=dataset)
         return dataset
 
     if hom_type != None:
@@ -697,7 +697,7 @@ def preformat_ZINC(dataset_dir, name, postfix=None):
             else:
                 dataset = get_data.add_zinc_subhom(name='ZINC', hom_files=count_files, idx_list=idx_list, sub_file=sub_file, root=data_dir, dataset=dataset)
         elif "LPCA" in postfix:
-            dataset = get_data.add_lpca(os.path.join(os.environ["ZINC_LPCA_DATA_DIR"], postfix.lower() + ".npz"), dataset=dataset)
+            dataset = get_data.add_lpca(os.path.join(os.environ["LPCA_DATA_DIR"], postfix.lower() + ".npz"), dataset=dataset)
     return dataset
 
 def preformat_QM9(dataset_dir,name, postfix=None, de_normalize=False):
