@@ -22,7 +22,7 @@ posenc_LPCAEnc:
   stack_on_h: False
   dim_pe: 16
   model: DeepSet  # Transformer
-  layers: 6
+  layers: 5
   n_heads: 4  # Only used when `posenc.model: Transformer`
 train:
   mode: custom
