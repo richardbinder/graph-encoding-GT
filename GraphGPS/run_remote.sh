@@ -7,7 +7,8 @@ enc_dim=$4
 
 export ZINC_LPCA_DATA_DIR="encodings/$enc"
 
-cfg_file="configs/ZINC/With_Edge_Features/GTe/$config.yaml"
+
+cfg_file=$config
 if [[ ! -f "$cfg_file" ]]; then
     echo "ERROR: Config does not exist: $cfg_file"
     exit
