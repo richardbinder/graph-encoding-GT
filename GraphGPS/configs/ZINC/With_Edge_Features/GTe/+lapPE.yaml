@@ -25,7 +25,7 @@ posenc_LapPE:
     max_freqs: 10
   model: DeepSet  # Transformer
   dim_pe: 16
-  layers: 2
+  layers: 3
   n_heads: 4  # Only used when `posenc.model: Transformer`
   raw_norm_type: none
 train:

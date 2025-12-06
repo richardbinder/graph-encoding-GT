@@ -2,6 +2,7 @@ import torch
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.register import (register_node_encoder)
 from torch import nn
+from torch_geometric.nn.models import MLP
 
 
 @register_node_encoder('LPCAEnc')
@@ -24,28 +25,31 @@ class LPCAEncoder(torch.nn.Module):
         n_layers = pecfg.layers  # Num. layers in PE encoder model
         n_heads = pecfg.n_heads  # Num. attention heads in Trf PE encoder
 
-        activation = nn.ReLU  # register.act_dict[cfg.gnn.act]
-        if model_type == 'Transformer':
-            # Transformer model for LapPE
-            encoder_layer = nn.TransformerEncoderLayer(d_model=dim_pe,
-                                                       nhead=n_heads,
-                                                       batch_first=True)
-            self.pe_encoder = nn.TransformerEncoder(encoder_layer,
-                                                    num_layers=n_layers)
-        else:
-            # DeepSet model for LapPE
-            layers = []
-            if n_layers == 1:
-                layers.append(activation())
-            else:
-                self.linear_A = nn.Linear(dim_pe, 2 * dim_pe)
-                layers.append(activation())
-                for _ in range(n_layers - 2):
-                    layers.append(nn.Linear(2 * dim_pe, 2 * dim_pe))
-                    layers.append(activation())
-                layers.append(nn.Linear(2 * dim_pe, dim_pe))
-                layers.append(activation())
-            self.pe_encoder = nn.Sequential(*layers)
+        # activation = nn.ReLU  # register.act_dict[cfg.gnn.act]
+        # if model_type == 'Transformer':
+        #     # Transformer model for LapPE
+        #     encoder_layer = nn.TransformerEncoderLayer(d_model=dim_pe,
+        #                                                nhead=n_heads,
+        #                                                batch_first=True)
+        #     self.pe_encoder = nn.TransformerEncoder(encoder_layer,
+        #                                             num_layers=n_layers)
+        # else:
+        #     # DeepSet model for LapPE
+        #     layers = []
+        #     if n_layers == 1:
+        #         layers.append(activation())
+        #     else:
+        #         self.linear_A = nn.Linear(dim_pe, 2 * dim_pe)
+        #         layers.append(activation())
+        #         for _ in range(n_layers - 2):
+        #             layers.append(nn.Linear(2 * dim_pe, 2 * dim_pe))
+        #             layers.append(activation())
+        #         layers.append(nn.Linear(2 * dim_pe, dim_pe))
+        #         layers.append(activation())
+        #     self.pe_encoder = nn.Sequential(*layers)
+
+        self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe*4, out_channels=dim_pe, num_layers=n_layers,
+                           dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
 
         self.expand_x = expand_x and self.emb_dim - self.enc_dim > 0
         if self.expand_x:
@@ -58,7 +62,7 @@ class LPCAEncoder(torch.nn.Module):
         lpca_enc = getattr(batch, 'lpca_enc')
 
         pos_enc = lpca_enc
-        pos_enc = self.linear_A(pos_enc)  # (Num nodes) x dim_pe
+        # pos_enc = self.linear_A(pos_enc)  # (Num nodes) x dim_pe
 
         # PE encoder: a Transformer or DeepSet model
         if self.model_type == 'Transformer':

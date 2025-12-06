@@ -22,8 +22,10 @@ posenc_LPCAEnc:
   stack_on_h: False
   dim_pe: 16
   model: DeepSet  # Transformer
-  layers: 5
+  layers: 20
   n_heads: 4  # Only used when `posenc.model: Transformer`
+  norm: batch_norm
+  dropout: 0.0
 train:
   mode: custom
   batch_size: 32
