@@ -54,55 +54,45 @@ def concat_node_encoders(encoder_classes, pe_enc_names):
         def __init__(self, dim_emb):
             super().__init__()
 
-            if (
-                cfg.posenc_EquivStableLapPE.enable
-            ):  # Special handling for Equiv_Stable LapPE where node feats and PE are not concat
+            # Special handling for Equiv_Stable LapPE where node feats and PE are not concatenated.
+            if cfg.posenc_EquivStableLapPE.enable:
                 self.encoder1 = self.enc1_cls(dim_emb)
                 self.encoder2 = self.enc2_cls(dim_emb)
+                return
+
+            # --- Common PE config lookup ---------------------------------------------------------
+            pe_name = self.enc2_name
+
+            # Try PE config from posenc_*, fall back to ctenc_*
+            posenc_cfg = getattr(cfg, f"posenc_{pe_name}", None)
+            ctenc_cfg = getattr(cfg, f"ctenc_{pe_name}", None)
+
+            if posenc_cfg is not None:
+                enc2_dim_pe = posenc_cfg.dim_pe
+            elif ctenc_cfg is not None:
+                enc2_dim_pe = ctenc_cfg.dim_ct
             else:
-                # PE dims can only be gathered once the cfg is loaded.
-                enc2_dim_pe = (
-                    getattr(cfg, f"posenc_{self.enc2_name}").dim_pe
-                    if hasattr(cfg, f"posenc_{self.enc2_name}")
-                    else getattr(cfg, f"ctenc_{self.enc2_name}").dim_ct
+                raise ValueError(
+                    f"Neither posenc_{pe_name} nor ctenc_{pe_name} found in cfg."
                 )
 
-                if (
-                    not hasattr(cfg, f"ctenc_{self.enc2_name}")
-                    or not hasattr(
-                        getattr(cfg, f"ctenc_{self.enc2_name}"), "stack_on_h"
-                    )
-                ) and (
-                    not hasattr(cfg, f"posenc_{self.enc2_name}.stack_on_h")
-                    or not hasattr(
-                        getattr(cfg, f"posenc_{self.enc2_name}"), "stack_on_h"
-                    )
-                ):
-                    self.encoder1 = self.enc1_cls(dim_emb - enc2_dim_pe)
-                elif hasattr(cfg, f"ctenc_{self.enc2_name}") and hasattr(
-                    getattr(cfg, f"ctenc_{self.enc2_name}"), "stack_on_h"
-                ):
-                    self.encoder1 = (
-                        self.enc1_cls(dim_emb - enc2_dim_pe)
-                        if getattr(
-                            getattr(cfg, f"ctenc_{self.enc2_name}"), "stack_on_h"
-                        )
-                        == False
-                        else self.enc1_cls(dim_emb)
-                    )
-                elif hasattr(cfg, f"posenc_{self.enc2_name}") and hasattr(
-                    getattr(cfg, f"posenc_{self.enc2_name}"), "stack_on_h"
-                ):
-                    self.encoder1 = (
-                        self.enc1_cls(dim_emb - enc2_dim_pe)
-                        if getattr(
-                            getattr(cfg, f"posenc_{self.enc2_name}"), "stack_on_h"
-                        )
-                        == False
-                        else self.enc1_cls(dim_emb)
-                    )
+            # --- Decide if PE is stacked on top of h or concatenated ----------------------------
+            # Default behavior: PE is concatenated with node features -> enc1 gets (dim_emb - enc2_dim_pe)
+            stack_on_h = False
 
-                self.encoder2 = self.enc2_cls(dim_emb, expand_x=False)
+            # Prefer ctenc_* if it has a stack_on_h attribute, else fall back to posenc_*
+            for cfg_obj in (ctenc_cfg, posenc_cfg):
+                if cfg_obj is not None and hasattr(cfg_obj, "stack_on_h"):
+                    stack_on_h = bool(getattr(cfg_obj, "stack_on_h"))
+                    break
+
+            # If PE is stacked on top of h, encoder1 sees full dim_emb,
+            # otherwise it only gets dim_emb - enc2_dim_pe.
+            enc1_dim = dim_emb if stack_on_h else dim_emb - enc2_dim_pe
+
+            # --- Build encoders ------------------------------------------------------------------
+            self.encoder1 = self.enc1_cls(enc1_dim)
+            self.encoder2 = self.enc2_cls(dim_emb, expand_x=False)
 
         def forward(self, batch):
             batch = self.encoder1(batch)
@@ -268,6 +258,7 @@ pe_encs = {
     "SignNet": SignNetNodeEncoder,
     "EquivStableLapPE": EquivStableLapPENodeEncoder,
     "GraphormerBias": GraphormerEncoder,
+    "LPCAEnc": LPCAEncoder,
 }
 
 # Count Encoding node encoders.
@@ -275,7 +266,6 @@ ct_encs = {
     "NodeCountEnc": MLPNodeCountEncoder,
     "GraphCountEnc": MLPGraphCountEncoder,
     "NodeCountEncX2": MLPNodeCountEncoderX2,
-    "LPCAEnc": LPCAEncoder,
     "DummyNode": DummyNodeEncoder,
 }
 

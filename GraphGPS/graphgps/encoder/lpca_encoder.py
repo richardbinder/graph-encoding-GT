@@ -9,8 +9,8 @@ class LPCAEncoder(torch.nn.Module):
     def __init__(self, emb_dim, expand_x=False):
         super().__init__()
         
-        enc_cfg = cfg.ctenc_LPCAEnc
-        self.enc_dim = enc_cfg.dim_ct
+        enc_cfg = cfg.posenc_LPCAEnc
+        self.enc_dim = enc_cfg.dim_pe
         self.emb_dim = emb_dim
         self.pass_as_var = enc_cfg.pass_as_var if hasattr(enc_cfg, "pass_as_var") else False
         self.dim_in = enc_cfg.dim_in if hasattr(enc_cfg, "dim_in") else 0

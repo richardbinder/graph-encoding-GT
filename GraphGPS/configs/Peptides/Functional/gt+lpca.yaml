@@ -18,8 +18,9 @@ dataset:
   edge_encoder: True
   edge_encoder_name: Bond
   edge_encoder_bn: False
-ctenc_LPCAEnc:
-  dim_ct: 16
+posenc_LPCAEnc:
+  enable: True
+  dim_pe: 16
   gamma: 0.0
 train:
   mode: custom
