@@ -160,6 +160,6 @@ dmypy.json
 *.swp
 
 # sbatch scripts
-run_*
+# run_*
 
 .ckpt
