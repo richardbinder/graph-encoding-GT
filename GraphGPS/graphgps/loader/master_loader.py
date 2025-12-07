@@ -697,7 +697,7 @@ def preformat_ZINC(dataset_dir, name, postfix=None):
             else:
                 dataset = get_data.add_zinc_subhom(name='ZINC', hom_files=count_files, idx_list=idx_list, sub_file=sub_file, root=data_dir, dataset=dataset)
         elif "LPCA" in postfix:
-            dataset = get_data.add_lpca(os.path.join(os.environ["LPCA_DATA_DIR"], postfix.lower() + ".npz"), dataset=dataset)
+            dataset = get_data.add_lpca(os.path.join(os.environ["LPCA_DATA_DIR"]), dataset=dataset)
     return dataset
 
 def preformat_QM9(dataset_dir,name, postfix=None, de_normalize=False):
