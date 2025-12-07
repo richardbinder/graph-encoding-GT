@@ -19,7 +19,7 @@ class LPCAEncoder(torch.nn.Module):
         pecfg = cfg.posenc_LPCAEnc
         dim_pe = pecfg.dim_pe  # Size of Laplace PE embedding
         n_layers = pecfg.layers  # Num. layers in PE encoder model
-        n_heads = pecfg.n_heads  # Num. attention heads in Trf PE encoder
+        # n_heads = pecfg.n_heads  # Num. attention heads in Trf PE encoder
 
         self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe*4, out_channels=dim_pe, num_layers=n_layers,
                            dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
