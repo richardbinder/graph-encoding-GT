@@ -42,6 +42,7 @@ gt:
   layer_norm: False
   batch_norm: True
   residual: True
+  varied_width: False
   post_norm: False
   norm_layers: False
   extra_norm: False
