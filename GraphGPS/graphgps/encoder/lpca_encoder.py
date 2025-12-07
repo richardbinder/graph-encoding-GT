@@ -24,13 +24,13 @@ class LPCAEncoder(torch.nn.Module):
         self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe*4, out_channels=dim_pe, num_layers=n_layers,
                            dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
 
-        encoder_layer = nn.TransformerEncoderLayer(d_model=dim_pe*4,
-                                                   nhead=n_heads,
-                                                   batch_first=True)
-        self.pe_transformer = nn.TransformerEncoder(encoder_layer, num_layers=n_layers)
-
-        self.pe_encoder2 = MLP(in_channels=dim_pe*4, hidden_channels=dim_pe*8, out_channels=dim_pe, num_layers=n_layers,
-                           dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
+        # encoder_layer = nn.TransformerEncoderLayer(d_model=dim_pe*4,
+        #                                            nhead=n_heads,
+        #                                            batch_first=True)
+        # self.pe_transformer = nn.TransformerEncoder(encoder_layer, num_layers=n_layers)
+        #
+        # self.pe_encoder2 = MLP(in_channels=dim_pe*4, hidden_channels=dim_pe*8, out_channels=dim_pe, num_layers=n_layers,
+        #                    dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
 
         self.expand_x = expand_x and self.emb_dim - self.enc_dim > 0
         if self.expand_x:
