@@ -19,10 +19,16 @@ class LPCAEncoder(torch.nn.Module):
         pecfg = cfg.posenc_LPCAEnc
         dim_pe = pecfg.dim_pe  # Size of Laplace PE embedding
         n_layers = pecfg.layers  # Num. layers in PE encoder model
+        norm_type = pecfg.raw_norm_type.lower()  # Raw PE normalization layer type
         # model_type = pecfg.model  # Encoder NN model type for PEs
         # n_heads = pecfg.n_heads  # Num. attention heads in Trf PE encoder
 
-        self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe*2, out_channels=dim_pe, num_layers=n_layers,
+        if norm_type == 'batchnorm':
+            self.raw_norm = nn.BatchNorm1d(self.enc_dim)
+        else:
+            self.raw_norm = None
+
+        self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe, out_channels=dim_pe, num_layers=n_layers,
                            dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
 
         # encoder_layer = nn.TransformerEncoderLayer(d_model=dim_pe*4,
@@ -42,8 +48,10 @@ class LPCAEncoder(torch.nn.Module):
         
     def forward(self, batch):
         lpca_enc = getattr(batch, 'lpca_enc')
-
         pos_enc = lpca_enc
+
+        if self.raw_norm:
+            pos_enc = self.raw_norm(pos_enc)
 
         pos_enc = self.pe_encoder(pos_enc)
         # pos_enc = self.pe_transformer(pos_enc)

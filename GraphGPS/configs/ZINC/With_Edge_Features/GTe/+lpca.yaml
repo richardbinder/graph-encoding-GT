@@ -21,6 +21,7 @@ posenc_LPCAEnc:
   enable: True
   dim_pe: 16
   layers: 2
+  raw_norm_type: BatchNorm
   norm: batch_norm
   dropout: 0.0
 train:
