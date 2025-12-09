@@ -23,13 +23,13 @@ class LPCAEncoder(torch.nn.Module):
         # model_type = pecfg.model  # Encoder NN model type for PEs
         # n_heads = pecfg.n_heads  # Num. attention heads in Trf PE encoder
 
-        # if norm_type == 'batchnorm':
-        #     self.raw_norm = nn.BatchNorm1d(self.enc_dim)
-        # else:
-        #     self.raw_norm = None
-        #
-        # self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe, out_channels=dim_pe, num_layers=n_layers,
-        #                    dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
+        if norm_type == 'batchnorm':
+            self.raw_norm = nn.BatchNorm1d(self.enc_dim)
+        else:
+            self.raw_norm = None
+
+        self.pe_encoder = MLP(in_channels=dim_pe, hidden_channels=dim_pe, out_channels=dim_pe, num_layers=n_layers,
+                           dropout=cfg.posenc_LPCAEnc.dropout, norm=cfg.posenc_LPCAEnc.norm)
 
         self.expand_x = expand_x and self.emb_dim - self.enc_dim > 0
         if self.expand_x:
@@ -42,10 +42,10 @@ class LPCAEncoder(torch.nn.Module):
         lpca_enc = getattr(batch, 'lpca_enc')
         pos_enc = lpca_enc
 
-        # if self.raw_norm:
-        #     pos_enc = self.raw_norm(pos_enc)
-        #
-        # pos_enc = self.pe_encoder(pos_enc)
+        if self.raw_norm:
+            pos_enc = self.raw_norm(pos_enc)
+
+        pos_enc = self.pe_encoder(pos_enc)
 
         # k = pos_enc.shape[1] // 2
         # L, R = pos_enc[:, :k], pos_enc[:, k:]
