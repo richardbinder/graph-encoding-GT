@@ -19,12 +19,11 @@ dataset:
   edge_encoder: False
 posenc_LPCAEnc:
   enable: True
-  stack_on_h: False
   dim_pe: 16
-  model: DeepSet  # Transformer
-  layers: 20
-  n_heads: 4  # Only used when `posenc.model: Transformer`
+  layers: 2
+  n_heads: 4
   norm: batch_norm
+  raw_norm_type: BatchNorm
   dropout: 0.0
 train:
   mode: custom
