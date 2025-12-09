@@ -687,6 +687,29 @@ def preformat_ZINC(dataset_dir, name, postfix=None):
         for split in ['train', 'val', 'test']]
     )
 
+    # num_edges = torch.tensor([m.edge_attr.shape[0] for m in dataset])
+    # y_max = num_edges.max()
+    # y_min = num_edges.min()
+    # dataset.data.y = [(y - y_min) / (y_max - y_min) for y in num_edges]
+
+    # Redefine the labels
+    graphs = []
+    for graph in dataset:
+        # graph.y = (graph.edge_index[0] == 5).sum()
+        _, node_degrees = torch.unique(graph.edge_index[0], return_counts=True)
+        max_degree = torch.max(node_degrees)
+        graph.y = max_degree
+        # graph.x = torch.zeros(graph.x.shape).long()
+        # graph.edge_index = torch.zeros((2, 1), dtype=torch.long)
+        # graph.edge_attr = torch.zeros(1, dtype=torch.long)
+        graphs.append(graph)
+
+    dataset.data, dataset.slices = dataset.collate(graphs)
+
+    y_max = dataset.data.y.max()
+    y_min = dataset.data.y.min()
+    dataset.data.y = (dataset.data.y - y_min) / (y_max - y_min)
+
     if postfix != None and name == 'subset':
         if "Spasm" in postfix:
             count_files = ['zinc_with_homs_c7.json', 'zinc_with_homs_c8.json']
@@ -698,6 +721,8 @@ def preformat_ZINC(dataset_dir, name, postfix=None):
                 dataset = get_data.add_zinc_subhom(name='ZINC', hom_files=count_files, idx_list=idx_list, sub_file=sub_file, root=data_dir, dataset=dataset)
         elif "LPCA" in postfix:
             dataset = get_data.add_lpca(os.path.join(os.environ["LPCA_DATA_DIR"]), dataset=dataset)
+
+
     return dataset
 
 def preformat_QM9(dataset_dir,name, postfix=None, de_normalize=False):
